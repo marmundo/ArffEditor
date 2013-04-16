@@ -48,4 +48,30 @@ public class Editor {
 		}
 		return attributeName;
 	}
+	
+	
+	/**
+	 * Replace a value of a Attribute
+	 * @param attributeIndex Index of attribute
+	 * @param oldValue Attribute value that will be replace
+	 * @param newValue New attribute value that will be replace 
+	 */
+	public void replace(int attributeIndex,Object oldValue, Object newValue){
+		for(int i=0; i<instances.numInstances();i++){		
+			Instance instance =instances.instance(i);
+			Attribute att=instance.attribute(attributeIndex);
+			if(instance.attribute(attributeIndex).isNominal()){
+				if(instance.stringValue(att).equals(oldValue)){
+					instance.setValue(att, (String)newValue);
+				}
+			}if (instance.attribute(attributeIndex).isNumeric()) {
+				if(instance.value(att)==(Double)oldValue){
+					instance.setValue(att, (Double)newValue);
+				}
+			} else {
+				//Add a log4j entry (The attribute isnt a string or numeric)
+				System.out.println(oldValue.getClass());
+			}
+		}
+	}
 }
