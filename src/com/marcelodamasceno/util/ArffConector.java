@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import weka.core.Attribute;
-import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
@@ -44,6 +44,7 @@ public class ArffConector {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void typeOfAttribute(Instances data, int attributeIndex){
 		switch (data.attribute(attributeIndex).type()) {
 		case weka.core.Attribute.DATE:
@@ -134,9 +135,10 @@ public class ArffConector {
 			dataTransformed.deleteAttributeAt(attributeIndex);
 		}		
 		//Creating a new Attribute
-		FastVector fvNominalVal = new FastVector(2);
-		fvNominalVal.addElement("positive");
-		fvNominalVal.addElement("negative");		 
+		//FastVector fvNominalVal = new FastVector(2);
+		ArrayList<String> fvNominalVal= new ArrayList<String>(); 
+		fvNominalVal.add("positive");
+		fvNominalVal.add("negative");		 
 		Attribute classAttribute = new Attribute("class", fvNominalVal);
 		
 		if(dataTransformed.classIndex()==attributeIndex){
