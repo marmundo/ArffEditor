@@ -41,7 +41,7 @@ public class InterSessionGenerator {
 		if(dataSet.numInstances()>0){
 			interSessionDataSets.add(dataSet);
 			if(save)
-				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Vertical.arff");
+				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
 		}			
 		dataSet.delete();
 
@@ -53,7 +53,7 @@ public class InterSessionGenerator {
 		if(dataSet.numInstances()>0){
 			interSessionDataSets.add(dataSet);
 			if(save)
-				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
+				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Horizontal.arff");
 		}		
 		return interSessionDataSets;
 	}
