@@ -65,6 +65,7 @@ public class InterSessionGenerator {
 	 * @return
 	 * @deprecated
 	 */
+	@SuppressWarnings("unused")
 	private ArrayList<Instances> generateSettoInterSessionExperiments2(Instances data, boolean save){
 		ArrayList<Instances> dataSets= new ArrayList<Instances>();
 		Instances dataSet= new Instances(data, data.numInstances());
@@ -109,12 +110,14 @@ public class InterSessionGenerator {
 		}
 		return dataSets;
 	}
+	@SuppressWarnings("unused")
 	private Instances interSessionInstances(Instances data, ArrayList<Integer> user, ArrayList<Integer> doc){
 		Editor editor=new Editor(data);		
 		Instances userDataSet=editor.getInstancesAttributeValue(userIndex, user);
 		return editor.getInstancesAttributeValue(userDataSet,docIndex, doc);
 	}
 
+	@SuppressWarnings("unused")
 	private Instances interSessionInstances(Instances data, int user, int doc){
 		Editor editor=new Editor(data);		
 		Instances userDataSet=editor.getInstancesAttributeValue(userIndex, user);

@@ -1,15 +1,15 @@
 package com.marcelodamasceno.main;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.RemoveWithValues;
 
 public class Editor {
-	Instances instances;
+	Instances _instances;
 	Editor(Instances instances){
-		this.instances=instances;
+		this._instances=instances;
 	}
 
 	/**
@@ -18,16 +18,18 @@ public class Editor {
 	 * @param attributeValue Value of Attribute
 	 */
 	public void removeInstances(int attributeIndex,Object attributeValue){
-		for(int i=0; i<instances.numInstances();i++){		
-			Instance instance =instances.instance(i);
+		for(int i=0; i<_instances.numInstances();i++){		
+			Instance instance =_instances.instance(i);
 			Attribute att=instance.attribute(attributeIndex);
 			if(instance.attribute(attributeIndex).isNominal()){
 				if(instance.stringValue(att).equals(attributeValue)){
-					instances.delete(i);
+					_instances.delete(i);
+					i=i-1;
 				}
-			}if (instance.attribute(attributeIndex).isNumeric()) {
-				if(instance.value(att)==(Double)attributeValue){
-					instances.delete(i);
+			}if (instance.attribute(attributeIndex).isNumeric()) {				
+				if(instance.value(att)==(Double)attributeValue){		
+					_instances.delete(i);
+					i=i-1;
 				}
 			} else {
 				//Add a log4j entry (The attribute isnt a string or numeric)
@@ -42,14 +44,14 @@ public class Editor {
 	 */
 	public ArrayList<String> listAtributes(){
 		ArrayList<String> attributeName=new ArrayList<String>();
-		for(int i=0;i<instances.numAttributes();i++){
-			attributeName.add(instances.attribute(i).name());
-			System.out.println("Attribute "+i+" "+instances.attribute(i).name());
+		for(int i=0;i<_instances.numAttributes();i++){
+			attributeName.add(_instances.attribute(i).name());
+			System.out.println("Attribute "+i+" "+_instances.attribute(i).name());
 		}
 		return attributeName;
 	}
-	
-	
+
+
 	/**
 	 * Replace a value of a Attribute
 	 * @param attributeIndex Index of attribute
@@ -57,21 +59,72 @@ public class Editor {
 	 * @param newValue New attribute value that will be replace 
 	 */
 	public void replace(int attributeIndex,Object oldValue, Object newValue){
-		for(int i=0; i<instances.numInstances();i++){		
-			Instance instance =instances.instance(i);
+		for(int i=0; i<_instances.numInstances();i++){		
+			Instance instance =_instances.instance(i);
 			Attribute att=instance.attribute(attributeIndex);
 			if(instance.attribute(attributeIndex).isNominal()){
 				if(instance.stringValue(att).equals(oldValue)){
 					instance.setValue(att, (String)newValue);
 				}
-			}if (instance.attribute(attributeIndex).isNumeric()) {
-				if(instance.value(att)==(Double)oldValue){
-					instance.setValue(att, (Double)newValue);
+			}else{
+				if (instance.attribute(attributeIndex).isNumeric()) {
+					if(instance.value(att)==(Double)oldValue){
+						instance.setValue(att, (Double)newValue);
+					}
+				} else {
+					//Add a log4j entry (The attribute isnt a string or numeric)
+					System.out.println(oldValue.getClass());
 				}
-			} else {
-				//Add a log4j entry (The attribute isnt a string or numeric)
-				System.out.println(oldValue.getClass());
 			}
 		}
 	}
+
+	public Instances getInstancesAttributeValues(Instances data,int attrIndex,ArrayList<Integer> values){
+		RemoveWithValues remove=new RemoveWithValues();
+		remove.setAttributeIndex(String.valueOf(attrIndex));		
+		remove.setModifyHeader(true);
+		
+		for (int i = 0; i < data.numInstances(); i++) {
+			if(!values.contains(data.instance(i).value(attrIndex))){
+				
+			}
+			
+		}
+		removeInstances(attrIndex, values);
+		return data;
+	}
+	
+	public Instances getInstances(){
+		return _instances;
+	}
+
+	public Instances getInstancesAttributeValue(Instances data,int attributeIndex,Object attributeValue){
+		//Dataset which will has the instances with attributeValue in a attribute with a index equal to attributeIndex
+		Instances dataSet=new Instances(data, data.numInstances());
+		
+		for(int i=0; i<data.numInstances();i++){	
+			Instance instance =data.instance(i);
+			Attribute att=instance.attribute(attributeIndex);			
+			if(att.isNominal()){
+				String atrValue=String.valueOf(attributeValue);
+				if(instance.stringValue(att).equals(atrValue)){
+					dataSet.add(instance);					
+				}
+			}else{
+				if (att.isNumeric()) {
+					if(instance.value(att)==(Double)attributeValue){
+						dataSet.add(instance);
+					}
+				} else {
+					//Add a log4j entry (The attribute isnt a string or numeric)
+					System.out.println(attributeValue.getClass());
+				}
+			}
+		}			
+		return dataSet;
+	}
+
+	public Instances getInstancesAttributeValue(int attributeIndex,Object attributeValue){
+		return getInstancesAttributeValue(_instances,attributeIndex,attributeValue);
+	}	
 }

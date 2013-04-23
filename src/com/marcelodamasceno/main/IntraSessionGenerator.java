@@ -45,6 +45,7 @@ public class IntraSessionGenerator {
 	 * @param data Original DataSet
 	 * @deprecated
 	 */
+	@SuppressWarnings("unused")
 	private void generateSettoIntraSessionExperiments2(Instances data){
 		int numUsers=data.numDistinctValues(29);
 		int numDocs=data.numDistinctValues(0);		
