@@ -1,6 +1,7 @@
 package com.marcelodamasceno.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ArffLoader;
+import weka.core.converters.ArffSaver;
 import weka.core.converters.ArffLoader.ArffReader;
 
 public class ArffConector {
@@ -42,7 +43,7 @@ public class ArffConector {
 			return 0;
 		}
 	}
-	
+
 	private void typeOfAttribute(Instances data, int attributeIndex){
 		switch (data.attribute(attributeIndex).type()) {
 		case weka.core.Attribute.DATE:
@@ -62,9 +63,10 @@ public class ArffConector {
 	public Instances getInstancesWithClasse(Instances data,String classe){	
 		return getInstancesWithClasse(data,classe, data.numInstances());	
 	}
-	
+
 	public Instances getInstancesWithClasse(Instances data,String classe, int numInstances){	
 		Instances instClass = new Instances(data, data.numInstances());
+		@SuppressWarnings("unchecked")
 		Enumeration<Instance> enumInstances = data.enumerateInstances();
 		int counter=0;
 		while( enumInstances.hasMoreElements() && counter<numInstances ) {
@@ -78,7 +80,7 @@ public class ArffConector {
 		}
 		return instClass;
 	}
-	
+
 	public Instances mergeInstances(Instances data,Instances data2){
 		@SuppressWarnings("unchecked")
 		Enumeration<Instance> enu=data2.enumerateInstances();
@@ -90,9 +92,10 @@ public class ArffConector {
 	public Instances getInstancesWithClasse(Instances data,double classe) {
 		return getInstancesWithClasse(data,classe, data.numInstances());		
 	}
-	
+
 	public Instances getInstancesWithClasse(Instances data,double classe, int numInstances) {
 		Instances instClass = new Instances(data, data.numInstances());
+		@SuppressWarnings("unchecked")
 		Enumeration<Instance> enumInstances = data.enumerateInstances();
 		int counter=0;
 		while(enumInstances.hasMoreElements() && counter<=numInstances) {
@@ -107,7 +110,7 @@ public class ArffConector {
 		return instClass;
 	}
 
-	protected Instance copyIntanceWithoutClass(Instance original, Instance copy, String classValue){
+	public Instance copyIntanceWithoutClass(Instance original, Instance copy, String classValue){
 		int arg=0;
 		for(;arg<original.numAttributes()-1;arg++){
 			if(original.attribute(arg).isNominal())
@@ -119,26 +122,59 @@ public class ArffConector {
 		return copy;
 	}
 
-	protected Instances changeAttributeNames(Instances data, String classe){
-	
+	public Instances changeAttributeNames(Instances data, int attributeIndex, String newName){
+
 		Instances dataTransformed=new Instances(data);
-	
-	
-		//This line is because the Instances class don't delete a class attribute
-		dataTransformed.setClassIndex(0);
-		dataTransformed.deleteAttributeAt(data.numAttributes()-1);
-	
+
+		if(dataTransformed.classIndex()==attributeIndex){
+			//This line is because the Instances class don't delete a class attribute
+			dataTransformed.setClassIndex(0);
+			dataTransformed.deleteAttributeAt(data.numAttributes()-1);
+		}else{
+			dataTransformed.deleteAttributeAt(attributeIndex);
+		}		
 		//Creating a new Attribute
 		FastVector fvNominalVal = new FastVector(2);
 		fvNominalVal.addElement("positive");
 		fvNominalVal.addElement("negative");		 
 		Attribute classAttribute = new Attribute("class", fvNominalVal);
-	
+		
+		if(dataTransformed.classIndex()==attributeIndex){
 		dataTransformed.insertAttributeAt(classAttribute, data.numAttributes()-1);
 		dataTransformed.setClassIndex(data.numAttributes()-1);
-	
-	
+		}else{
+			dataTransformed.insertAttributeAt(classAttribute, attributeIndex);
+		}
+
 		return dataTransformed;
+	}
+
+	/**
+	 * Save as Arff format
+	 * @param data Instances
+	 * @param path Path
+	 * @param fileName File Name
+	 */
+	public void save(Instances data, String path, String fileName){
+		ArffSaver saver=new ArffSaver();
+		saver.setInstances(data);
+		try {
+			saver.setFile(new File(path,fileName));
+			saver.writeBatch();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Save as Arff format
+	 * @param data
+	 * @param fileName
+	 */
+	public void save(Instances data,String fileName){
+		save(data, ".", fileName);		
 	}
 
 	public static void main(String args[]){

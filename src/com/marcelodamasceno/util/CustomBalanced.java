@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Random;
 
+import com.marcelodamasceno.main.BinaryTransformation;
+
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
