@@ -3,11 +3,7 @@ package com.marcelodamasceno.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Random;
-
 import com.marcelodamasceno.main.BinaryTransformation;
-
-import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 
@@ -30,6 +26,7 @@ public class CustomBalanced {
 		Instances dataPositive=conector.getInstancesWithClasse(data, positiveClass);
 		//dataPositive.numInstances()/data.numClasses()-1 is a number of instances that I have to get from each class	
 		int numInstancesGotFromNegativeClass=dataPositive.numInstances()/(data.numClasses()-1);		
+		@SuppressWarnings("rawtypes")
 		Enumeration enu=data.classAttribute().enumerateValues();
 			while(enu.hasMoreElements()){
 			String classe=(String) enu.nextElement();
