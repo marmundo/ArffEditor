@@ -1,7 +1,5 @@
 package com.marcelodamasceno.util;
 
-import java.util.Iterator;
-
 import weka.core.Instances;
 
 public class Utils {
