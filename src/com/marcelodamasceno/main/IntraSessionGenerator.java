@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.marcelodamasceno.util.ArffConector;
+import com.marcelodamasceno.util.Utils;
 
 import weka.core.Instances;
 
@@ -26,7 +27,7 @@ public class IntraSessionGenerator {
 		Instances userDataSet=editor.getInstancesAttributeValue(userIndex, user);
 		return editor.getInstancesAttributeValue(userDataSet,docIndex, doc);
 	}
-	
+
 	/**
 	 * Method to generate dataset to a user in a session, i.e, each interaction with a document
 	 * @param data Original DataSet
@@ -58,31 +59,59 @@ public class IntraSessionGenerator {
 			}			
 		}
 	}
-	
-	private void generateSettoIntraSessionExperiments(Instances data){
-		
-		
+
+	private void generateSettoIntraSessionExperiments(Instances data, boolean save){
+
+
 		//creating intra-session dataset for each user
 		Balancer balancer=new Balancer();
 		BinaryTransformation binary=new BinaryTransformation();
 		try {
 			//Binary dataSets
-			ArrayList<Instances> dataSets=binary.binaryTransformation(data);
-			//Balancing and generating Intra-Session for each user
-			for(int classe=0;classe<dataSets.size();classe++){
-				balancer.customBalancedSaver(dataSets.get(classe),classe+1);
-			}			
+			ArrayList<Instances> dataSetsBinary=binary.binaryTransformation(data);
+			//Balanced dataSets
+			ArrayList<Instances> dataSetsBalanced= new ArrayList<Instances>();
+			//Intra-Session dataSets
+			ArrayList<Instances> dataSetsIntraSession= new ArrayList<Instances>();
+			//Balancing and generating Intra-Session for each user (user=classe+1)
+			for(int classe=0;classe<dataSetsBinary.size();classe++){
+				dataSetsBalanced.add(balancer.customBalanced(dataSetsBinary.get(classe),classe+1));
+				Utils util=new Utils();
+				//Temporary dataSet
+				Instances dataSet= new Instances(dataSetsBalanced.get(0), data.numInstances());
+				InterSessionGenerator inter=new InterSessionGenerator();
+				//Day 1 - Scrolling
+				for (int doc = 1; doc <= 3; doc++) {
+					dataSet=util.mergeDataSets(dataSet, inter.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
+				}
+				if(dataSet.numInstances()>0){					
+					dataSetsIntraSession.add(classe, dataSet);					
+					if(save)
+						conector.save(dataSet,PROJECT_PATH+"/IntraSession","IntraSession-User_"+(classe+1)+"_Day_1_Scrolling.arff");
+				}			
+				dataSet.delete();
+
+				//Day 1 - Horizontal
+				for (int doc = 4; doc <= 5; doc++) {
+					dataSet=util.mergeDataSets(dataSet, inter.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
+				}			
+				if(dataSet.numInstances()>0){					
+					dataSetsIntraSession.add(classe, dataSet);	
+					if(save)
+						conector.save(dataSet,PROJECT_PATH+"/IntraSession","IntraSession-User_"+(classe+1)+"_Day_1_Horizontal.arff");
+				}
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+
 	}
-	
+
 	public void execute(Instances data) {
-		generateSettoIntraSessionExperiments(data);
+		generateSettoIntraSessionExperiments(data,true);
 	}
-	
+
 	public String getPROJECT_PATH() {
 		return PROJECT_PATH;
 	}
@@ -97,5 +126,5 @@ public class IntraSessionGenerator {
 		Instances data=conector.openDataSet("/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque/TouchAnalytics/dataset_processada_artigo2.arff");
 		intra.execute(data);
 	}
-	
+
 }
