@@ -31,6 +31,14 @@ public class Balancer {
 		}
 	}
 	
+	/**
+	 * Balances the dataset for a specific class. For example, it has 20 instances for a class, and 25 for others. 
+	 * This method will make a dataset with the same quantities of instances of class chosen.
+	 * @param data
+	 * @param classValue
+	 * @return
+	 * @throws IOException
+	 */
 	public Instances customBalanced(Instances data, int classValue) throws IOException{
 		CustomBalanced balanced = new CustomBalanced();	
 		if(classValue==0){					
