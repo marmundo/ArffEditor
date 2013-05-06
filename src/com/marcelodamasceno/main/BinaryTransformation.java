@@ -49,23 +49,27 @@ public class BinaryTransformation {
 	 */
 	protected void binaryTransformationSaver(Instances data) throws IOException{
 		Instances dataTransformed;
-		BinaryTransformation transformation= new BinaryTransformation();
 		int classValue=1;
 		for(;classValue<=data.numClasses();classValue++){
-			dataTransformed=transformation.transformation(data, String.valueOf(classValue));
+			dataTransformed=transformation(data, String.valueOf(classValue));
 			conector.save(dataTransformed, "binaryComplete"+String.valueOf(classValue)+".arff");
 		}
 	}
 
+	/**
+	 * Method to binaries a dataSet to each user present in it.
+	 * @param data DataSet to be binarized
+	 * @return A dataSets sets binarized for each user. When the instance belongs to the user, the class is positive, if not, is negative
+	 * @throws IOException
+	 */
 	protected ArrayList<Instances> binaryTransformation(Instances data) throws IOException{
 		Instances dataTransformed;
 		ArrayList<Instances> dataSets=new ArrayList<Instances>();
-		BinaryTransformation transformation= new BinaryTransformation();
 		int classValue=1;
 		for(;classValue<=data.numClasses();classValue++){
-			dataTransformed=transformation.transformation(data, String.valueOf(classValue));
+			dataTransformed=transformation(data, String.valueOf(classValue));
 			dataSets.add(dataTransformed);
-		}
+		}	
 		return dataSets;
 	}
 	/**
