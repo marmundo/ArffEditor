@@ -36,7 +36,6 @@ public class InterSessionGenerator {
 		//Day 1 - Scrolling
 		for (int doc = 1; doc <= 3; doc++) {
 			dataSet=util.mergeDataSets(dataSet, getInstancesWithDoc(data, doc));
-			//Instances.mergeInstances(dataSet, getInstancesWithDoc(data, doc));
 		}
 		if(dataSet.numInstances()>0){
 			interSessionDataSets.add(dataSet);
@@ -145,11 +144,13 @@ public class InterSessionGenerator {
 		Main main=new Main();
 
 		Balancer balancer=new Balancer();
+		BinaryTransformation binary= new BinaryTransformation();
 
 		//creating intra-session dataset for each user
 		try {
 			//Binary dataSets
-			ArrayList<Instances> dataSets=main.binaryTransformation(data);
+			ArrayList<Instances> dataSets= new ArrayList<Instances>();
+			dataSets=binary.binaryTransformation(data);
 			//Balancing
 			for(int classe=0;classe<dataSets.size();classe++){
 				dataBalanced=balancer.customBalanced(dataSets.get(classe),classe+1);
