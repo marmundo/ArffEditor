@@ -8,7 +8,8 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
 
 public class Editor {
 	Instances _instances;
-	Editor(Instances instances){
+	
+	public Editor(Instances instances){
 		this._instances=instances;
 	}
 
@@ -98,6 +99,13 @@ public class Editor {
 		return _instances;
 	}
 
+	/**
+	 * Gets all the instances with @attributeValue at @attributeIndex.
+	 * @param data DataSet
+	 * @param attributeIndex Attribute's Index
+	 * @param attributeValue Attribute's Value
+	 * @return
+	 */
 	public Instances getInstancesAttributeValue(Instances data,int attributeIndex,Object attributeValue){
 		//Dataset which will has the instances with attributeValue in a attribute with a index equal to attributeIndex
 		Instances dataSet=new Instances(data, data.numInstances());

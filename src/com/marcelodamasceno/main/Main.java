@@ -2,10 +2,8 @@ package com.marcelodamasceno.main;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import weka.core.Attribute;
-import weka.core.Instances;
 import com.marcelodamasceno.util.ArffConector;
 
 
@@ -27,38 +25,6 @@ public class Main {
 		}		
 		return a;
 	}
-
-
-
-
-
-	/**
-	 * Method to binary all the users from the TouchAnalytics DataSet
-	 * @param data
-	 * @throws IOException
-	 */
-	protected void binaryTransformationSaver(Instances data) throws IOException{
-		Instances dataTransformed;
-		BinaryTransformation transformation= new BinaryTransformation();
-		int classValue=1;
-		for(;classValue<=data.numClasses();classValue++){
-			dataTransformed=transformation.transformation(data, String.valueOf(classValue));
-			conector.save(dataTransformed, "binaryComplete"+String.valueOf(classValue)+".arff");
-		}
-	}
-
-	protected ArrayList<Instances> binaryTransformation(Instances data) throws IOException{
-		Instances dataTransformed;
-		ArrayList<Instances> dataSets=new ArrayList<Instances>();
-		BinaryTransformation transformation= new BinaryTransformation();
-		int classValue=1;
-		for(;classValue<=data.numClasses();classValue++){
-			dataTransformed=transformation.transformation(data, String.valueOf(classValue));
-			dataSets.add(dataTransformed);
-		}
-		return dataSets;
-	}
-
 
 	/**
 	 * @param args

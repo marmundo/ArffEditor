@@ -1,5 +1,6 @@
 package com.marcelodamasceno.main;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,23 +11,14 @@ import weka.core.Instances;
 
 public class InterSessionGenerator {
 
-	private ArffConector conector=new ArffConector();
-	private String PROJECT_PATH="/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque";
-	final int userIndex=29;
-	final int docIndex=0;
+	Utils utils=new Utils();
+	private ArffConector conector=new ArffConector();	
 
-
-
-	public String getPROJECT_PATH() {
-		return PROJECT_PATH;
-	}
-	public void setPROJECT_PATH(String pROJECT_PATH) {
-		PROJECT_PATH = pROJECT_PATH;
-	}
-
+	/**
+	 * @deprecated Use {@link com.marcelodamasceno.util.Utils#getInstancesWithDoc(Instances,int)} instead
+	 */
 	protected Instances getInstancesWithDoc(Instances data, int doc){
-		Editor editor=new Editor(data);		
-		return editor.getInstancesAttributeValue(data,docIndex, doc);
+		return utils.getInstancesWithDoc(data, doc);
 	}
 
 	private ArrayList<Instances> generateSettoInterSessionExperiments(Instances data, boolean save, int user){
@@ -35,24 +27,24 @@ public class InterSessionGenerator {
 		Utils util=new Utils();
 		//Day 1 - Scrolling
 		for (int doc = 1; doc <= 3; doc++) {
-			dataSet=util.mergeDataSets(dataSet, getInstancesWithDoc(data, doc));
+			dataSet=util.mergeDataSets(dataSet, utils.getInstancesWithDoc(data, doc));
 		}
 		if(dataSet.numInstances()>0){
 			interSessionDataSets.add(dataSet);
 			if(save)
-				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
+				conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
 		}			
 		dataSet.delete();
 
 		//Day 1 - Horizontal
 		for (int doc = 4; doc <= 5; doc++) {
-			dataSet=util.mergeDataSets(dataSet, getInstancesWithDoc(data, doc));
+			dataSet=util.mergeDataSets(dataSet, utils.getInstancesWithDoc(data, doc));
 			//Instances.mergeInstances(dataSet, getInstancesWithDoc(data, doc));				
 		}			
 		if(dataSet.numInstances()>0){
 			interSessionDataSets.add(dataSet);
 			if(save)
-				conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Horizontal.arff");
+				conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_1_Horizontal.arff");
 		}		
 		return interSessionDataSets;
 	}
@@ -78,7 +70,7 @@ public class InterSessionGenerator {
 			if(dataSet.numInstances()>0){
 				dataSets.add(dataSet);
 				if(save)
-					conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
+					conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_1_Scrolling.arff");
 			}	
 			dataSet.delete();
 			//Day 1 - Vertical
@@ -88,7 +80,7 @@ public class InterSessionGenerator {
 			if(dataSet.numInstances()>0){
 				dataSets.add(dataSet);
 				if(save)
-					conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_1_Vertical.arff");
+					conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_1_Vertical.arff");
 
 			}	/*
 			dataSet.delete();
@@ -97,14 +89,14 @@ public class InterSessionGenerator {
 			if(dataSet.numInstances()>0){
 				dataSets.add(dataSet);
 				if(save)
-					conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_2_Scrolling.arff");
+					conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_2_Scrolling.arff");
 			}
 			//Day 2 - Vertical						
 			dataSet=intra.intraSessionInstances(data, user, 7);
 			if(dataSet.numInstances()>0){
 				dataSets.add(dataSet);
 				if(save)
-					conector.save(dataSet,PROJECT_PATH+"/InterSession","InterSession-User_"+user+"_Day_2_Vertical.arff");
+					conector.save(dataSet,utils.getPROJECT_PATH()+"/InterSession","InterSession-User_"+user+"_Day_2_Vertical.arff");
 			}*/
 		}
 		return dataSets;
@@ -112,15 +104,15 @@ public class InterSessionGenerator {
 	@SuppressWarnings("unused")
 	private Instances interSessionInstances(Instances data, ArrayList<Integer> user, ArrayList<Integer> doc){
 		Editor editor=new Editor(data);		
-		Instances userDataSet=editor.getInstancesAttributeValue(userIndex, user);
-		return editor.getInstancesAttributeValue(userDataSet,docIndex, doc);
+		Instances userDataSet=editor.getInstancesAttributeValue(Utils.userIndex, user);
+		return editor.getInstancesAttributeValue(userDataSet,Utils.docIndex, doc);
 	}
 
 	@SuppressWarnings("unused")
 	private Instances interSessionInstances(Instances data, int user, int doc){
 		Editor editor=new Editor(data);		
-		Instances userDataSet=editor.getInstancesAttributeValue(userIndex, user);
-		return editor.getInstancesAttributeValue(userDataSet,docIndex, doc);
+		Instances userDataSet=editor.getInstancesAttributeValue(Utils.userIndex, user);
+		return editor.getInstancesAttributeValue(userDataSet,Utils.docIndex, doc);
 	}
 
 	/**
@@ -139,28 +131,25 @@ public class InterSessionGenerator {
 
 
 		/*Original DataSet*/ 
-		Instances data=conector.openDataSet("/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque/TouchAnalytics/dataset_processada_artigo2.arff");
-		Instances dataBalanced=new Instances(data);
-		Main main=new Main();
-
-		Balancer balancer=new Balancer();
-		BinaryTransformation binary= new BinaryTransformation();
-
-		//creating intra-session dataset for each user
+		Instances data;
 		try {
-			//Binary dataSets
+			data = conector.openDataSet("/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque/TouchAnalytics/dataset_processada_artigo2.arff");
+			Instances dataBalanced=new Instances(data);
+			Balancer balancer=new Balancer();
+			BinaryTransformation binary= new BinaryTransformation();
 			ArrayList<Instances> dataSets= new ArrayList<Instances>();
 			dataSets=binary.binaryTransformation(data);
 			//Balancing
 			for(int classe=0;classe<dataSets.size();classe++){
 				dataBalanced=balancer.customBalanced(dataSets.get(classe),classe+1);
 				inter.execute(dataBalanced, true,classe+1);
-			}			
+			}		
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 }

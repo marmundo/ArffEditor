@@ -1,5 +1,6 @@
 package com.marcelodamasceno.main;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -82,7 +83,7 @@ public class IntraSessionGenerator {
 				InterSessionGenerator inter=new InterSessionGenerator();
 				//Day 1 - Scrolling
 				for (int doc = 1; doc <= 3; doc++) {
-					dataSet=util.mergeDataSets(dataSet, inter.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
+					dataSet=util.mergeDataSets(dataSet, inter.utils.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
 				}
 				if(dataSet.numInstances()>0){					
 					dataSetsIntraSession.add(classe, dataSet);					
@@ -93,7 +94,7 @@ public class IntraSessionGenerator {
 
 				//Day 1 - Horizontal
 				for (int doc = 4; doc <= 5; doc++) {
-					dataSet=util.mergeDataSets(dataSet, inter.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
+					dataSet=util.mergeDataSets(dataSet, inter.utils.getInstancesWithDoc(dataSetsBalanced.get(classe), doc));
 				}			
 				if(dataSet.numInstances()>0){					
 					dataSetsIntraSession.add(classe, dataSet);	
@@ -123,8 +124,14 @@ public class IntraSessionGenerator {
 	public static void main(String args[]) {
 		IntraSessionGenerator intra=new IntraSessionGenerator();
 		ArffConector conector=new ArffConector();
-		Instances data=conector.openDataSet("/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque/TouchAnalytics/dataset_processada_artigo2.arff");
-		intra.execute(data);
+		Instances data;
+		try {
+			data = conector.openDataSet("/home/marcelo/Área de Trabalho/Documentos-Windows/Google Drive/doutorado/projeto/dataset/Base de Toque/TouchAnalytics/dataset_processada_artigo2.arff");
+			intra.execute(data);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

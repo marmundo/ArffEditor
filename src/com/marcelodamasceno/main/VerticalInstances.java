@@ -1,5 +1,7 @@
 package com.marcelodamasceno.main;
 
+import java.io.FileNotFoundException;
+
 import com.marcelodamasceno.util.ArffConector;
 
 import weka.core.Instances;
@@ -41,8 +43,15 @@ public class VerticalInstances {
 		ArffConector conector=new ArffConector();
 		int classValue=1;
 		for(;classValue<=data.numClasses();classValue++){
-			Instances dataSet=conector.openDataSet(PROJECT_PATH+"/IntraSession/IntraSet Balanced-"+classValue+".arff");
-			conector.save(verticalInstances(dataSet),PROJECT_PATH+"/IntraSession","Vertical IntraSet Balanced-"+classValue+".arff");
+			Instances dataSet;
+			try {
+				dataSet = conector.openDataSet(PROJECT_PATH+"/IntraSession/IntraSet Balanced-"+classValue+".arff");
+				conector.save(verticalInstances(dataSet),PROJECT_PATH+"/IntraSession","Vertical IntraSet Balanced-"+classValue+".arff");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
